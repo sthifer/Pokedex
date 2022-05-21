@@ -1,0 +1,43 @@
+*{
+    font-family: 'Raleway', sans-serif;
+}
+body{
+    width: 1024px;
+    margin: auto;
+}
+.listaPokemon{
+    display: flex;
+    flex-wrap: wrap;
+    gap:10px;
+}
+.pokemon{
+    width: 220px;
+    padding: 10px;
+    background-color: #FDF3DF;
+    text-align: center;
+
+}
+header{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+}
+header ul{
+    list-style: none;
+}
+.centrado{
+    text-align: center;
+}
+.paginacion{
+    background-color: aliceblue;
+    padding: 3px 8px 3px 8px;
+    border: 1px solid black;
+    border-radius: 50%;
+    width: 20px;
+    margin: 10px;
+    text-decoration: none;
+}
+.botones-paginacion{
+    margin-top: 2rem;
+}
