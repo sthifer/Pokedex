@@ -1,22 +1,29 @@
 const divListaPokemons$$ = document.querySelector(".listaPokemon");
 const divbotonesPokemons$$ = document.querySelector(".botones-paginacion");
-const cantidadPokemon = 12;
+const buscador$$ = document.querySelector("#buscador");
+const cantidadPokemonMostrar = 12;
+let totalPokemons = 150;
+// let encontrados = 0;
 
-const descargaListaPokemon = async (offset) => {
+const descargaListaPokemonLimitada = async (offset) => {
 
-    const datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidadPokemon}&offset=${offset}`);
+    const datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidadPokemonMostrar}&offset=${offset}`);
     const datosParseados = await datosApi.json();
-    
-    muestraPokemons(datosParseados.results);
-
+    muestraPokemons(datosParseados.results,false);
 }
 
-const descargaPokemon =  (url) => {
+const descargaPokemon =  (url,busqueda) => {
 
     fetch(url)
     .then(response => response.json())
     .then(allPokemons => {
-        pintarPokemon(allPokemons)})
+        if (!busqueda){
+        pintarPokemon(allPokemons);
+        }else if (allPokemons.name.toUpperCase().trim().includes(buscador$$.value.toUpperCase().trim())){
+            pintarPokemon(allPokemons);
+            //encontrados = encontrados+1;
+        }
+    })
 
 }
 
@@ -32,29 +39,61 @@ const pintarPokemon = (pokemon) => {
      divListaPokemons$$.appendChild(unPokemon$$);
 }
 
-const muestraPokemons = (datosParseadosRecorrer) => {
+const muestraPokemons = (datosParseadosRecorrer,busqueda) => {
     divListaPokemons$$.innerHTML= "";
-
     datosParseadosRecorrer.forEach(element => {
-        descargaPokemon(element.url);
+        descargaPokemon(element.url,busqueda);
+        
     });
-
+    //  setTimeout(() => {
+        divbotonesPokemons$$.innerHTML = "";
+        if (!busqueda)    creaPaginacion();
+    //  }, 100);
     
 
 }
 
-descargaListaPokemon(0);
+const creaPaginacion = () =>{
+    
+    // let mifor = 0;
 
-for(let i=0;i<150/cantidadPokemon ;i++){
-    const paginacion = document.createElement('a');
-    paginacion.className="paginacion";
-    paginacion.innerText=i;
-    //paginacion.href="?page="+i;
-    paginacion.href= "#";
-    paginacion.onclick = () =>{
-        // let pagina = $_GET("page");;
-        // console.log(pagina);
-        descargaListaPokemon(i*cantidadPokemon);
+    // if (encontrados===0){
+    //     mifor = totalPokemons;
+    // }else{
+    //     mifor = encontrados;
+    // }
+
+    for(let i=0;i<totalPokemons/cantidadPokemonMostrar ;i++){
+        const paginacion = document.createElement('a');
+        paginacion.className="paginacion";
+        paginacion.innerText=i;
+        //paginacion.href="?page="+i;
+        paginacion.href= "#";
+        paginacion.onclick = () =>{
+            // let pagina = $_GET("page");;
+            // console.log(pagina);
+            descargaListaPokemonLimitada(i*cantidadPokemonMostrar);
+        }
+        divbotonesPokemons$$.appendChild(paginacion);
     }
-    divbotonesPokemons$$.appendChild(paginacion);
 }
+
+const LlamadaBoton = () =>{
+    if (buscador$$.value.trim()===""){
+        return
+    }
+    encontrados=0;
+    FiltraPorNombre();
+    
+}
+
+const FiltraPorNombre = async () =>{
+    const datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${totalPokemons}`);
+    const datosParseados = await datosApi.json();
+    muestraPokemons(datosParseados.results,true);
+}
+
+descargaListaPokemonLimitada(0);
+
+
+

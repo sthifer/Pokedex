@@ -2,7 +2,13 @@
     font-family: 'Raleway', sans-serif;
 }
 body{
+    background-image: url("../images/poke.png");
+    background-size: cover;
+    margin: 0;
+}
+section{
     width: 1024px;
+    
     margin: auto;
 }
 .listaPokemon{
@@ -15,18 +21,18 @@ body{
     padding: 10px;
     background-color: #FDF3DF;
     text-align: center;
-
 }
 header{
     display: flex;
     justify-content: space-around;
     align-items: center;
     align-content: center;
+    background-color: white;
 }
 header ul{
     list-style: none;
 }
-.centrado{
+.titular{
     text-align: center;
 }
 .paginacion{
