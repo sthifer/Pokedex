@@ -6,31 +6,39 @@ body{
     background-size: cover;
     margin: 0;
 }
-section{
-    width: 1024px;
-    
+section,.cabecera{
+    width: 1100px;
     margin: auto;
 }
 .listaPokemon{
     display: flex;
     flex-wrap: wrap;
-    gap:10px;
+    gap:25px;
 }
 .pokemon{
     width: 220px;
     padding: 10px;
-    background-color: #FDF3DF;
+    background-color: #FFF;
+    border-radius: 10px 40px 10px 40px;
+    border: 3px solid black;
     text-align: center;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs' width='300' height='350' preserveAspectRatio='none' viewBox='0 0 300 350'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1190%26quot%3b)' fill='none'%3e%3crect width='300' height='350' x='0' y='0' fill='rgba(148%2c 239%2c 90%2c 0.16)'%3e%3c/rect%3e%3cpath d='M0%2c121.378C23.603%2c120.381%2c46.614%2c116.08%2c67.474%2c104.992C89.662%2c93.198%2c112.099%2c78.816%2c122.826%2c56.093C133.602%2c33.266%2c127.335%2c7.128%2c125.56%2c-18.053C123.642%2c-45.263%2c130.327%2c-76.845%2c112.031%2c-97.076C93.74%2c-117.302%2c60.442%2c-109.222%2c34.777%2c-118.438C6.856%2c-128.464%2c-16.362%2c-160.98%2c-45.068%2c-153.489C-73.613%2c-146.04%2c-81.839%2c-109.357%2c-96.998%2c-84.049C-109.597%2c-63.015%2c-119.038%2c-41.604%2c-126.142%2c-18.137C-134.476%2c9.392%2c-153.351%2c38.424%2c-142.086%2c64.889C-130.834%2c91.326%2c-97.94%2c100.237%2c-71.241%2c110.852C-48.473%2c119.904%2c-24.479%2c122.412%2c0%2c121.378' fill='rgba(87%2c 195%2c 19%2c 0.16)'%3e%3c/path%3e%3cpath d='M300 509.392C328.983 504.834 350.048 482.11699999999996 374.227 465.5 397.567 449.459 424.02 437.455 439.337 413.633 455.985 387.741 474.094 355.42 463.616 326.476 452.959 297.04 408.246 297.606 388.529 273.289 367.683 247.578 379.956 195.099 348.57 184.586 317.668 174.235 296.251 221.647 265.362 232.034 236.361 241.786 201.322 225.348 176.05200000000002 242.599 149.25 260.895 127.29599999999999 292.94 128.644 325.363 129.987 357.683 168.643 374.436 182.74200000000002 403.55 196.352 431.654 185.90300000000002 470.547 209.083 491.47 232.486 512.595 268.856 514.29 300 509.392' fill='rgba(216%2c 249%2c 195%2c 0.16)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1190'%3e%3crect width='300' height='350' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
+    
 }
 header{
+    background-color: white;
+    padding: 10px 0 10px 0;
+}
+.cabecera{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     align-content: center;
-    background-color: white;
+
 }
-header ul{
+.cabecera ul{
     list-style: none;
+    padding: 0;
 }
 .titular{
     text-align: center;
@@ -38,7 +46,7 @@ header ul{
 .paginacion{
     background-color: aliceblue;
     padding: 3px 8px 3px 8px;
-    border: 1px solid black;
+    border: 2px solid black;
     border-radius: 50%;
     width: 20px;
     margin: 10px;
@@ -46,4 +54,46 @@ header ul{
 }
 .botones-paginacion{
     margin-top: 2rem;
+}
+.info{
+    display: flex;
+    justify-content: space-around;
+}
+.info p{
+    border: 2px solid black;
+    border-radius: 40px;
+    padding: 10px;
+    text-transform: capitalize;
+    font-weight: bold;
+    background-color: #FFF;
+}
+footer{
+    margin-top: 3rem;
+}
+footer img{
+    height: 400px;
+    width: 100%;
+}
+
+.menu a{
+    text-decoration: none;
+    font-weight: bold;
+}
+input{
+    border: none;
+    border-bottom: 2px solid grey;
+}
+input:focus{
+    outline: none;
+}
+button{
+    border: none;
+    padding: 10px;
+    border-radius: 3px;
+}
+.imagen{
+    height: 125px;
+}
+h2{
+    text-transform: capitalize;
 }
