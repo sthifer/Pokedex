@@ -1,14 +1,18 @@
-const divListaPokemons$$ = document.querySelector(".listaPokemon");
-const divbotonesPokemons$$ = document.querySelector(".botones-paginacion");
+const divListaPokemons$$ = document.querySelector(".poke_container");
+const divbotonesPokemons$$ = document.querySelector(".buttons_container");
 const buscador$$ = document.querySelector("#buscador");
 const cantidadPokemonMostrar = 12;
 let totalPokemons = 151;
 
-const descargaListaPokemonLimitada = async (offset) => {
-
-    const datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidadPokemonMostrar}&offset=${offset}`);
+//Descargamos los pokemon en funcion si hay filtro o no
+const descargaListaPokemon = async (offset,busqueda) => {
+    let datosApi;
+    if(!busqueda)   datosApi  = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidadPokemonMostrar}&offset=${offset}`);
+    else datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${totalPokemons}`);
+    
     const datosParseados = await datosApi.json();
-    muestraPokemons(datosParseados.results,false);
+
+    !busqueda ? recorrePokemons(datosParseados.results,false) : recorrePokemons(datosParseados.results,true);
 }
 
 const descargaPokemon =  (url,busqueda) => {
@@ -24,6 +28,7 @@ const descargaPokemon =  (url,busqueda) => {
     })
 }
 
+//Pintamos en HTML cada pokemon
 const pintarPokemon = (pokemon) => {
     const unPokemon$$ = document.createElement("div");
     unPokemon$$.className= "pokemon";
@@ -39,7 +44,8 @@ const pintarPokemon = (pokemon) => {
         divListaPokemons$$.appendChild(unPokemon$$);
 }
 
-const muestraPokemons = (datosParseadosRecorrer,busqueda) => {
+//Recorre cada pokemon buscado
+const recorrePokemons = (datosParseadosRecorrer,busqueda) => {
     divListaPokemons$$.innerHTML= "";
     datosParseadosRecorrer.forEach(element => {
         descargaPokemon(element.url,busqueda);
@@ -48,40 +54,44 @@ const muestraPokemons = (datosParseadosRecorrer,busqueda) => {
         if (!busqueda && buscador$$.value==="")    creaPaginacion();
 }
 
+//Crea los botones de paginación
 const creaPaginacion = () =>{
-
     let totalButton = totalPokemons%cantidadPokemonMostrar === 0 ? Math.floor(totalPokemons/cantidadPokemonMostrar) :  Math.floor(totalPokemons/cantidadPokemonMostrar)+1
     for(let i=0;i<totalButton  ;i++){
         const paginacion = document.createElement('a');
         paginacion.className="paginacion";
-        paginacion.innerText=i+1;
-        paginacion.href= "#";
+        paginacion.href= `?pagina=`+i;
         paginacion.onclick = () =>{
-            descargaListaPokemonLimitada(i*cantidadPokemonMostrar);
+            descargaListaPokemon(i*cantidadPokemonMostrar);
         }
         divbotonesPokemons$$.appendChild(paginacion);
     }
-
-
-}
-
-const mostrarEstadisticas = (pokemon) =>{
-    console.log('a',pokemon);
 }
 
 const LlamadaBoton = () =>{
+    //Quito get
+    window.history.pushState({}, document.title, window.location.origin + window.location.pathname );
+    //Si es vacío vuelvo al original
     if (buscador$$.value.trim()==="") {
-        descargaListaPokemonLimitada(0);
+        descargaListaPokemon(0);
         return;
     }
-        encontrados=0;
-    FiltraPorNombre();
+    //Busco
+    descargaListaPokemon(0,true);
 }
 
-const FiltraPorNombre = async () =>{
-    const datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${totalPokemons}`)
-    const datosParseados = await datosApi.json();
-    muestraPokemons(datosParseados.results,true);
+//Recupero Get
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-descargaListaPokemonLimitada(0);
+//Evento Enter
+buscador$$.addEventListener("keypress",function(event){
+    if (event.key==="Enter") LlamadaBoton();
+})
+
+//inicialización
+getParameterByName('pagina')==="" ? descargaListaPokemon(0) : descargaListaPokemon(getParameterByName('pagina')*cantidadPokemonMostrar);
