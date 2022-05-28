@@ -1,97 +1,132 @@
 const divListaPokemons$$ = document.querySelector(".poke_container");
+const divTypeList$$ = document.querySelector(".type_container");
 const divbotonesPokemons$$ = document.querySelector(".buttons_container");
-const buscador$$ = document.querySelector("#buscador");
-const cantidadPokemonMostrar = 12;
+const finder$$ = document.querySelector("#buscador");
+const PokemonToShow = 12;
 let totalPokemons = 151;
+let POKEMONLIST = [];
+let TYPESLIST = [];
 
-//Descargamos los pokemon en funcion si hay filtro o no
-const descargaListaPokemon = async (offset,busqueda) => {
-    let datosApi;
-    if(!busqueda)   datosApi  = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidadPokemonMostrar}&offset=${offset}`);
-    else datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${totalPokemons}`);
-    
-    const datosParseados = await datosApi.json();
-
-    !busqueda ? recorrePokemons(datosParseados.results,false) : recorrePokemons(datosParseados.results,true);
+const FechPokemon = async () => {
+    let datosApi,datosParseados;
+    for(let i=1; i<=totalPokemons; i++){
+        datosApi = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+        datosParseados = await datosApi.json();
+        POKEMONLIST = [...POKEMONLIST,datosParseados];
+    }
+    RunList(1,false);
 }
 
-const descargaPokemon =  (url,busqueda) => {
-    fetch(url)
-    .then(response => response.json())
-    .then(allPokemons => {
-        if (allPokemons.id>totalPokemons) return
-        if (!busqueda){
-        pintarPokemon(allPokemons);
-        }else if (allPokemons.name.toUpperCase().trim().includes(buscador$$.value.toUpperCase().trim())){
-            pintarPokemon(allPokemons);
-        }
+const FechTypes = async () => {
+    let datosApi,datosParseados;
+    datosApi = await fetch('https://pokeapi.co/api/v2/type/');
+    datosParseados = await datosApi.json();
+    for (const key in datosParseados.results) {
+            const element = datosParseados.results[key];
+             if (element.name==="unknown" || element.name==="dark" || element.name==="shadow") continue;
+            
+            TYPESLIST = [...TYPESLIST,element.name];
+    }
+    RunTypes();
+}
+
+const RunTypes = () =>{
+    TYPESLIST.forEach((element) =>{
+        const TypeDiv$$ = document.createElement('div');
+        TypeDiv$$.classList.add('types')
+        const TypeButton$$ = document.createElement('button');
+        TypeButton$$.innerText= element;
+        TypeButton$$.onclick = () => RunList(1,true,element);
+        TypeDiv$$.appendChild(TypeButton$$);
+        divTypeList$$.appendChild(TypeDiv$$);
     })
 }
 
-//Pintamos en HTML cada pokemon
-const pintarPokemon = (pokemon) => {
+
+const RunList = (offset,busqueda,typePokemon = "") =>{
+    POKEMONLIST.sort((a,b) => a.id - b.id);
+    divbotonesPokemons$$.innerHTML="";
+    divListaPokemons$$.innerHTML= "";
+    if (!busqueda){
+        POKEMONLIST
+        .filter(pokemon =>{
+            if (pokemon.id>=offset && pokemon.id<offset+PokemonToShow ) {
+                return pokemon};
+        })
+        .forEach(PokemonToShow => PrintPokemon(PokemonToShow))
+        if (offset===1) CreatePages();
+    }else{
+        const buscado = finder$$.value.toLowerCase();
+        POKEMONLIST
+        .filter(pokemon =>{
+            if (typePokemon !== "" && (pokemon.types[0].type.name===typePokemon || (pokemon.types.length>1 && pokemon.types[1].type.name===typePokemon))){
+                return pokemon;
+            }else if (typePokemon === "" && pokemon.name.includes(buscado)) {
+                return pokemon};
+        })
+        .forEach(PokemonToShow => PrintPokemon(PokemonToShow))
+    }
+}
+
+const ClickToTurn = (pokemon) =>{
+    const divPokemon$$ = document.querySelector(`.pokemon-${pokemon.id}`);
+    divPokemon$$.classList.add('girado');
+    divPokemon$$.innerHTML= "";
+    divPokemon$$.onclick = () => SeeFront(pokemon);
+    if (pokemon.abilities[0].ability.name){
+        divPokemon$$.innerHTML += `<p>1ª Habilidad: <span>${pokemon.abilities[0].ability.name}</span></p>`
+    }
+    if (pokemon.abilities[1].ability.name){
+        divPokemon$$.innerHTML += `<p>2ª Habilidad: <span>${pokemon.abilities[1].ability.name}</span></p>`
+    }
+    if (pokemon.stats){
+        divPokemon$$.innerHTML += `<p>HP: <span>${pokemon.stats[0].base_stat}</span></p>`
+        divPokemon$$.innerHTML += `<p>Ataque: <span>${pokemon.stats[1].base_stat}</span></p>`
+        divPokemon$$.innerHTML += `<p>Defensa: <span>${pokemon.stats[2].base_stat}</span></p>`
+    }
+}
+
+const SeeFront = (pokemon) =>{
+
+    const divPokemon$$ = document.querySelector(`.pokemon-${pokemon.id}`);
+    divListaPokemons$$.removeChild(divPokemon$$);
+    PrintPokemon(pokemon);
+}
+
+const PrintPokemon = (pokemon) => {
     const unPokemon$$ = document.createElement("div");
-    unPokemon$$.className= "pokemon";
+    unPokemon$$.classList.add("pokemon");
+    unPokemon$$.classList.add(`pokemon-${pokemon.id}`);
+    unPokemon$$.onclick = () => ClickToTurn(pokemon);
     unPokemon$$.style.order = pokemon.id;
     unPokemon$$.innerHTML = `
-            <div class='imagen'><img src="${pokemon.sprites.other.dream_world.front_default}" width='100px' height='125px'/></div>
+            <div class='imagen'><img src='${pokemon.sprites.other.dream_world.front_default}' alt='${pokemon.name}' width='100px' height='125px'/></div>
             <h2>${pokemon.name}</h2>
             <div class="info">
             <p>Nº ${pokemon.id}</p>
             <p>${pokemon.types[0].type.name}</p>
             </div>
         `;
-        divListaPokemons$$.appendChild(unPokemon$$);
+    divListaPokemons$$.appendChild(unPokemon$$);
 }
 
-//Recorre cada pokemon buscado
-const recorrePokemons = (datosParseadosRecorrer,busqueda) => {
-    divListaPokemons$$.innerHTML= "";
-    datosParseadosRecorrer.forEach(element => {
-        descargaPokemon(element.url,busqueda);
-    });
-        divbotonesPokemons$$.innerHTML = "";
-        if (!busqueda && buscador$$.value==="")    creaPaginacion();
-}
-
-//Crea los botones de paginación
-const creaPaginacion = () =>{
-    let totalButton = totalPokemons%cantidadPokemonMostrar === 0 ? Math.floor(totalPokemons/cantidadPokemonMostrar) :  Math.floor(totalPokemons/cantidadPokemonMostrar)+1
-    for(let i=0;i<totalButton  ;i++){
-        const paginacion = document.createElement('a');
+const CreatePages = () =>{
+    let totalButton = totalPokemons%PokemonToShow === 0 ? Math.floor(totalPokemons/PokemonToShow) :  Math.floor(totalPokemons/PokemonToShow)+1
+    for(let i=0;i<totalButton;i++){
+        const paginacion = document.createElement('button');
         paginacion.className="paginacion";
-        paginacion.href= `?pagina=`+i;
-        paginacion.onclick = () =>{
-            descargaListaPokemon(i*cantidadPokemonMostrar);
-        }
+        paginacion.onclick = () =>  RunList(i*PokemonToShow,false);
         divbotonesPokemons$$.appendChild(paginacion);
     }
 }
 
-const LlamadaBoton = () =>{
-    //Quito get
-    window.history.pushState({}, document.title, window.location.origin + window.location.pathname );
-    //Si es vacío vuelvo al original
-    if (buscador$$.value.trim()==="") {
-        descargaListaPokemon(0);
-        return;
-    }
-    //Busco
-    descargaListaPokemon(0,true);
+const Search = () =>{
+    if (finder$$.value.trim()==="") RunList(1,false);
+    else RunList(1,true);
 }
 
-//Recupero Get
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-//Evento Enter
-buscador$$.addEventListener("keypress",function(event){
-    if (event.key==="Enter") LlamadaBoton();
-})
+finder$$.addEventListener("keypress",(event) => {if (event.key==="Enter") Search()});
 
 //inicialización
-getParameterByName('pagina')==="" ? descargaListaPokemon(0) : descargaListaPokemon(getParameterByName('pagina')*cantidadPokemonMostrar);
+FechPokemon();
+FechTypes();

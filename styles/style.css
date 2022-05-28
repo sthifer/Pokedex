@@ -15,6 +15,7 @@ section,.cabecera{
     display: flex;
     flex-wrap: wrap;
     gap:25px;
+    padding-top: 2rem;
 }
 .pokemon{
     width: 220px;
@@ -27,26 +28,23 @@ section,.cabecera{
 }
 header{
     background-color: white;
-    padding: 10px 0 10px 0;
 }
 .cabecera{
     display: flex;
     justify-content: space-between;
     align-items: center;
     align-content: center;
-
 }
 .cabecera ul{
     list-style: none;
     padding: 0;
 }
-.title{
-    text-align: center;
-}
 .paginacion{
     background-image: url("../images/pokeball.png");
     background-size: contain;
     background-repeat: no-repeat;
+    background-color: transparent;
+    border: none;
     padding: 20px;
     font-weight: bold;
     margin: 10px;
@@ -68,7 +66,6 @@ header{
     font-weight: bold;
     background-color: #FFF;
 }
-
 .menu a{
     text-decoration: none;
     font-weight: bold;
@@ -80,7 +77,7 @@ input{
 input:focus{
     outline: none;
 }
-button{
+#search__button{
     border: none;
     padding: 10px;
     border-radius: 3px;
@@ -90,4 +87,32 @@ button{
 }
 h2{
     text-transform: capitalize;
+}
+.type_container{
+    margin-top: 1.3rem;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    justify-items: center;
+}
+.types{
+    width: 14%;
+}
+.types button{
+    width: 100%;
+    border: 2px solid #2181D6;
+    padding: 10px;
+    text-transform: capitalize;
+    font-weight: bold;
+    font-size: 1.1em;
+    border-radius: 10px 10px 10px 10px;
+    background-color: white;
+}
+.pokemon span{
+    font-weight: bold;
+}
+.girado{
+    font-size: 1.1em;
+    font-weight: 400;
 }
